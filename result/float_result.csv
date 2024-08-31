@@ -1,0 +1,3 @@
+Design Overall_Error_Sin Overall_Error_Cos Latency Interval-min Interval-max BRAM DSP FF LUT
+float_iter_5 100 100 0 1 1 0 0 0 0 	
+float_iter_10 100 100 0 1 1 0 0 0 0 	
