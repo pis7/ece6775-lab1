@@ -29,7 +29,23 @@ void cordic(theta_type theta, cos_sin_type &s, cos_sin_type &c)
 FIXED_STEP_LOOP:
   for (int step = 0; step < 20; step++)
   {
+
+    // Get sigma value (direction of rotation)
+    int sigma = (theta > 0) ? 1 : -1;
+
+    cos_sin_type old_cos = cur_cos;
+
+    // Do rotation using equations from rotation matrix
+    cur_cos = cur_cos - sigma * (cur_sin >> step);
+    cur_sin = sigma * (old_cos >> step) + cur_sin;
+
+    // Get new angle from LUT (theta_i = arctan(2^(-i)))
+    theta = theta - sigma * cordic_ctab[step];
   }
+
+  // End result
+  c = cur_cos;
+  s = cur_sin;
 
 #else // floating point design
 
