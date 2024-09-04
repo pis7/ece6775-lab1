@@ -21591,11 +21591,40 @@ namespace std __attribute__ ((__visibility__ ("default")))
 
 
 
-void cordic(theta_type theta, cos_sin_type &s, cos_sin_type &c) {
-# 29 "cordic.cpp"
+void cordic(theta_type theta, cos_sin_type &s, cos_sin_type &c)
+{
+
+
+
+  cos_sin_type cur_cos = 0.60725;
+  cos_sin_type cur_sin = 0.0;
+
+
+  cos_sin_type scale_f = 1.0;
+# 36 "cordic.cpp"
 FLOAT_STEP_LOOP:
-  for (int step = 0; step < 5; step++) {
+  for (int step = 0; step < 5; step++)
+  {
+
+
+    int sigma = (theta > 0) ? 1 : -1;
+
+    cos_sin_type old_cos = cur_cos;
+
+
+    cur_cos = cur_cos - cur_sin * sigma * scale_f;
+    cur_sin = old_cos * sigma * scale_f + cur_sin;
+
+
+    theta = theta - sigma * cordic_ctab[step];
+
+
+    scale_f = scale_f * 0.5;
   }
+
+
+  c = cur_cos;
+  s = cur_sin;
 
 
 }

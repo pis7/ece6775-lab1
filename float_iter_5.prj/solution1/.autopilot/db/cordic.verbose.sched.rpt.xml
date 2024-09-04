@@ -1,7 +1,7 @@
 <profile>
 
 <section name = "Vivado HLS Report for 'cordic'" level="0">
-<item name = "Date">Sat Aug 31 00:46:59 2024
+<item name = "Date">Tue Sep  3 21:13:42 2024
 </item>
 <item name = "Version">2019.2 (Build 2704478 on Wed Nov 06 22:10:23 MST 2019)</item>
 <item name = "Project">float_iter_5.prj</item>
@@ -15,7 +15,7 @@
 <section name = "" level="1">
 <item name = "Summary"><table name="" hasTotal="0">
 <keys size="4">Clock, Target, Estimated, Uncertainty</keys>
-<column name="ap_clk">10.00 ns, 0 ns, 1.25 ns</column>
+<column name="ap_clk">10.00 ns, 8.232 ns, 1.25 ns</column>
 </table>
 </item>
 </section>
@@ -24,7 +24,7 @@
 <section name = "" level="1">
 <item name = "Summary"><table name="" hasTotal="0">
 <keys size="8">, min, max, min, max, min, max, Type</keys>
-<column name="">0, 0, 0 ns, 0 ns, 0, 0, none</column>
+<column name="">96, 96, 0.960 us, 0.960 us, 96, 96, none</column>
 </table>
 </item>
 <item name = "Detail">
@@ -35,6 +35,7 @@
 </item>
 <item name = "Loop"><table name="" hasTotal="0">
 <keys size="8">Loop Name, min, max, Latency, achieved, target, Count, Pipelined</keys>
+<column name="- FLOAT_STEP_LOOP">95, 95, 19, -, -, 5, no</column>
 </table>
 </item>
 </section>

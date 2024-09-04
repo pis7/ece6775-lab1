@@ -11,20 +11,30 @@
 #include "systemc.h"
 #include "AESL_pkg.h"
 
+#include "cordic_dsub_64ns_bkb.h"
+#include "cordic_dadd_64ns_cud.h"
+#include "cordic_dmul_64ns_dEe.h"
+#include "cordic_dcmp_64ns_eOg.h"
+#include "cordic_cordic_ctab.h"
 
 namespace ap_rtl {
 
 struct cordic : public sc_module {
-    // Port declarations 7
+    // Port declarations 11
+    sc_in_clk ap_clk;
+    sc_in< sc_logic > ap_rst;
     sc_in< sc_logic > ap_start;
     sc_out< sc_logic > ap_done;
     sc_out< sc_logic > ap_idle;
     sc_out< sc_logic > ap_ready;
     sc_in< sc_lv<64> > theta;
-    sc_in< sc_lv<64> > s;
-    sc_in< sc_lv<64> > c;
-    // Port declarations for the virtual clock. 
-    sc_in_clk ap_virtual_clock;
+    sc_out< sc_lv<64> > s;
+    sc_out< sc_logic > s_ap_vld;
+    sc_out< sc_lv<64> > c;
+    sc_out< sc_logic > c_ap_vld;
+    sc_signal< sc_logic > ap_var_for_const0;
+    sc_signal< sc_lv<64> > ap_var_for_const1;
+    sc_signal< sc_lv<5> > ap_var_for_const2;
 
 
     // Module declarations
@@ -37,12 +47,157 @@ struct cordic : public sc_module {
 
     ofstream mHdltvinHandle;
     ofstream mHdltvoutHandle;
+    cordic_cordic_ctab* cordic_ctab_U;
+    cordic_dsub_64ns_bkb<1,5,64,64,64>* cordic_dsub_64ns_bkb_U1;
+    cordic_dadd_64ns_cud<1,5,64,64,64>* cordic_dadd_64ns_cud_U2;
+    cordic_dmul_64ns_dEe<1,6,64,64,64>* cordic_dmul_64ns_dEe_U3;
+    cordic_dmul_64ns_dEe<1,6,64,64,64>* cordic_dmul_64ns_dEe_U4;
+    cordic_dmul_64ns_dEe<1,6,64,64,64>* cordic_dmul_64ns_dEe_U5;
+    cordic_dcmp_64ns_eOg<1,2,64,64,1>* cordic_dcmp_64ns_eOg_U6;
+    sc_signal< sc_lv<20> > ap_CS_fsm;
+    sc_signal< sc_logic > ap_CS_fsm_state1;
+    sc_signal< sc_lv<6> > cordic_ctab_address0;
+    sc_signal< sc_logic > cordic_ctab_ce0;
+    sc_signal< sc_lv<64> > cordic_ctab_q0;
+    sc_signal< sc_lv<64> > grp_fu_157_p2;
+    sc_signal< sc_lv<64> > reg_181;
+    sc_signal< sc_logic > ap_CS_fsm_state9;
+    sc_signal< sc_logic > ap_CS_fsm_state15;
+    sc_signal< sc_lv<64> > grp_fu_162_p2;
+    sc_signal< sc_lv<64> > reg_187;
+    sc_signal< sc_lv<64> > grp_fu_167_p2;
+    sc_signal< sc_lv<64> > reg_193;
+    sc_signal< sc_lv<3> > step_fu_205_p2;
+    sc_signal< sc_lv<3> > step_reg_274;
+    sc_signal< sc_logic > ap_CS_fsm_state2;
+    sc_signal< sc_lv<1> > icmp_ln37_fu_199_p2;
+    sc_signal< sc_lv<64> > select_ln46_fu_258_p3;
+    sc_signal< sc_lv<64> > select_ln46_reg_284;
+    sc_signal< sc_logic > ap_CS_fsm_state3;
+    sc_signal< sc_lv<64> > cordic_ctab_load_reg_291;
+    sc_signal< sc_lv<64> > grp_fu_146_p2;
+    sc_signal< sc_lv<64> > theta_assign_reg_296;
+    sc_signal< sc_logic > ap_CS_fsm_state14;
+    sc_signal< sc_logic > ap_CS_fsm_state20;
+    sc_signal< sc_lv<64> > grp_fu_152_p2;
+    sc_signal< sc_lv<64> > cur_sin_0_reg_87;
+    sc_signal< sc_lv<64> > old_cos_reg_100;
+    sc_signal< sc_lv<64> > scale_f_0_reg_113;
+    sc_signal< sc_lv<3> > step_0_reg_125;
+    sc_signal< sc_lv<64> > p_0_reg_136;
+    sc_signal< sc_lv<64> > zext_ln50_fu_211_p1;
+    sc_signal< sc_lv<64> > grp_fu_146_p0;
+    sc_signal< sc_lv<64> > grp_fu_146_p1;
+    sc_signal< sc_logic > ap_CS_fsm_state10;
+    sc_signal< sc_logic > ap_CS_fsm_state16;
+    sc_signal< sc_lv<64> > grp_fu_157_p0;
+    sc_signal< sc_lv<64> > grp_fu_157_p1;
+    sc_signal< sc_logic > ap_CS_fsm_state4;
+    sc_signal< sc_lv<64> > grp_fu_162_p0;
+    sc_signal< sc_lv<64> > grp_fu_162_p1;
+    sc_signal< sc_lv<64> > grp_fu_167_p0;
+    sc_signal< sc_lv<64> > grp_fu_167_p1;
+    sc_signal< sc_lv<64> > bitcast_ln41_fu_216_p1;
+    sc_signal< sc_lv<11> > tmp_fu_220_p4;
+    sc_signal< sc_lv<52> > trunc_ln41_fu_230_p1;
+    sc_signal< sc_lv<1> > icmp_ln41_1_fu_240_p2;
+    sc_signal< sc_lv<1> > icmp_ln41_fu_234_p2;
+    sc_signal< sc_lv<1> > or_ln41_fu_246_p2;
+    sc_signal< sc_lv<1> > grp_fu_175_p2;
+    sc_signal< sc_lv<1> > and_ln41_fu_252_p2;
+    sc_signal< sc_lv<20> > ap_NS_fsm;
     static const sc_logic ap_const_logic_1;
     static const sc_logic ap_const_logic_0;
+    static const sc_lv<20> ap_ST_fsm_state1;
+    static const sc_lv<20> ap_ST_fsm_state2;
+    static const sc_lv<20> ap_ST_fsm_state3;
+    static const sc_lv<20> ap_ST_fsm_state4;
+    static const sc_lv<20> ap_ST_fsm_state5;
+    static const sc_lv<20> ap_ST_fsm_state6;
+    static const sc_lv<20> ap_ST_fsm_state7;
+    static const sc_lv<20> ap_ST_fsm_state8;
+    static const sc_lv<20> ap_ST_fsm_state9;
+    static const sc_lv<20> ap_ST_fsm_state10;
+    static const sc_lv<20> ap_ST_fsm_state11;
+    static const sc_lv<20> ap_ST_fsm_state12;
+    static const sc_lv<20> ap_ST_fsm_state13;
+    static const sc_lv<20> ap_ST_fsm_state14;
+    static const sc_lv<20> ap_ST_fsm_state15;
+    static const sc_lv<20> ap_ST_fsm_state16;
+    static const sc_lv<20> ap_ST_fsm_state17;
+    static const sc_lv<20> ap_ST_fsm_state18;
+    static const sc_lv<20> ap_ST_fsm_state19;
+    static const sc_lv<20> ap_ST_fsm_state20;
+    static const sc_lv<32> ap_const_lv32_0;
+    static const sc_lv<32> ap_const_lv32_8;
+    static const sc_lv<32> ap_const_lv32_E;
+    static const sc_lv<32> ap_const_lv32_1;
+    static const sc_lv<1> ap_const_lv1_0;
+    static const sc_lv<32> ap_const_lv32_2;
+    static const sc_lv<32> ap_const_lv32_D;
+    static const sc_lv<32> ap_const_lv32_13;
+    static const sc_lv<64> ap_const_lv64_0;
+    static const sc_lv<64> ap_const_lv64_3FE36E978D4FDF3B;
+    static const sc_lv<64> ap_const_lv64_3FF0000000000000;
+    static const sc_lv<3> ap_const_lv3_0;
+    static const sc_lv<1> ap_const_lv1_1;
+    static const sc_lv<32> ap_const_lv32_9;
+    static const sc_lv<32> ap_const_lv32_F;
+    static const sc_lv<32> ap_const_lv32_3;
+    static const sc_lv<64> ap_const_lv64_3FE0000000000000;
+    static const sc_lv<3> ap_const_lv3_5;
+    static const sc_lv<3> ap_const_lv3_1;
+    static const sc_lv<32> ap_const_lv32_34;
+    static const sc_lv<32> ap_const_lv32_3E;
+    static const sc_lv<11> ap_const_lv11_7FF;
+    static const sc_lv<52> ap_const_lv52_0;
+    static const sc_lv<64> ap_const_lv64_BFF0000000000000;
+    static const sc_lv<5> ap_const_lv5_2;
+    static const bool ap_const_boolean_1;
     // Thread declarations
+    void thread_ap_var_for_const0();
+    void thread_ap_var_for_const1();
+    void thread_ap_var_for_const2();
+    void thread_ap_clk_no_reset_();
+    void thread_and_ln41_fu_252_p2();
+    void thread_ap_CS_fsm_state1();
+    void thread_ap_CS_fsm_state10();
+    void thread_ap_CS_fsm_state14();
+    void thread_ap_CS_fsm_state15();
+    void thread_ap_CS_fsm_state16();
+    void thread_ap_CS_fsm_state2();
+    void thread_ap_CS_fsm_state20();
+    void thread_ap_CS_fsm_state3();
+    void thread_ap_CS_fsm_state4();
+    void thread_ap_CS_fsm_state9();
     void thread_ap_done();
     void thread_ap_idle();
     void thread_ap_ready();
+    void thread_bitcast_ln41_fu_216_p1();
+    void thread_c();
+    void thread_c_ap_vld();
+    void thread_cordic_ctab_address0();
+    void thread_cordic_ctab_ce0();
+    void thread_grp_fu_146_p0();
+    void thread_grp_fu_146_p1();
+    void thread_grp_fu_157_p0();
+    void thread_grp_fu_157_p1();
+    void thread_grp_fu_162_p0();
+    void thread_grp_fu_162_p1();
+    void thread_grp_fu_167_p0();
+    void thread_grp_fu_167_p1();
+    void thread_icmp_ln37_fu_199_p2();
+    void thread_icmp_ln41_1_fu_240_p2();
+    void thread_icmp_ln41_fu_234_p2();
+    void thread_or_ln41_fu_246_p2();
+    void thread_s();
+    void thread_s_ap_vld();
+    void thread_select_ln46_fu_258_p3();
+    void thread_step_fu_205_p2();
+    void thread_tmp_fu_220_p4();
+    void thread_trunc_ln41_fu_230_p1();
+    void thread_zext_ln50_fu_211_p1();
+    void thread_ap_NS_fsm();
     void thread_hdltv_gen();
 };
 

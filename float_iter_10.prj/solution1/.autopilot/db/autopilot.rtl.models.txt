@@ -1,1 +1,6 @@
+cordic_dsub_64ns_bkb
+cordic_dadd_64ns_cud
+cordic_dmul_64ns_dEe
+cordic_dcmp_64ns_eOg
+cordic_cordic_ctab
 cordic

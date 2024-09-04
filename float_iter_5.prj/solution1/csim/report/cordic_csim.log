@@ -6,8 +6,8 @@ make[1]: Entering directory '/home/pis7/ece6775/lab1/float_iter_5.prj/solution1/
    Generating csim.exe
 make[1]: Leaving directory '/home/pis7/ece6775/lab1/float_iter_5.prj/solution1/csim/build'
 #------------------------------------------------
-Overall_Error_Sin = 100
-Overall_Error_Cos = 100
+Overall_Error_Sin = 16.2007
+Overall_Error_Cos = 16.2002
 #------------------------------------------------
 INFO: [SIM 1] CSim done with 0 errors.
 INFO: [SIM 3] *************** CSIM finish ***************

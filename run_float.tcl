@@ -20,7 +20,13 @@ file delete -force "./result/${filename}"
 #------------------------------------------------------
 # You can specify a set of iteration counts to explore.
 #------------------------------------------------------
-set num_iterations { 5 10 }
+
+# range function obtained from: https://wiki.tcl-lang.org/page/range
+proc range {from to {step 1}} {
+    set res $from; while {$to>$from} {lappend res [incr from $step]}; return $res
+}
+
+set num_iterations [range 5 100 5]
 
 #------------------------------------------------------
 # run batch experiments
