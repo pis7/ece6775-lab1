@@ -31,6 +31,11 @@ fixed-sw: result/fixed_sw.txt
 fixed-hw: result/fixed_result.csv
 fixed: fixed-sw fixed-hw
 
+# Opt targets
+opt-sw: result/opt_sw.txt
+opt-hw: result/opt_result.csv
+opt: opt-sw opt-hw
+
 # compile floating-point implementation
 cordic_float: cordic.h cordic.cpp cordic_test.cpp
 	@echo "Compiling & executing SW floating-point implementation ..."
@@ -38,6 +43,11 @@ cordic_float: cordic.h cordic.cpp cordic_test.cpp
  
 # compile fixed-point implementation
 cordic_fixed: cordic.h cordic.cpp cordic_test.cpp
+	@echo "Compiling & executing SW fixed-point implementation ..."
+	g++ $(CXXFLAGS) -DFIXED_TYPE cordic.cpp cordic_test.cpp -o $@
+
+# compile fixed-point implementation for opt
+cordic_opt: cordic.h cordic.cpp cordic_test.cpp
 	@echo "Compiling & executing SW fixed-point implementation ..."
 	g++ $(CXXFLAGS) -DFIXED_TYPE cordic.cpp cordic_test.cpp -o $@
 
