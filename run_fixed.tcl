@@ -36,8 +36,8 @@ proc range {from to {init_step 1}} {
     return $res
 }
 
-set total_width [range 2 1024 2]
-set int_width   [concat 0 [range 2 1024 2]]
+set total_width [range 2 512 2]
+set int_width   [concat 0 [range 2 512 2]]
 
 #-----------------------------------
 # run batch experiments

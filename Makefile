@@ -17,9 +17,9 @@ XIL_HLS=source $(XILINX_VIVADO)/settings64.sh; vivado_hls
 VHLS_INC=$(XILINX_VIVADO)/include
 CXXFLAGS=-g -I${VHLS_INC}
 
-.PHONY: all float fixed clean
+.PHONY: all float fixed opt clean
 
-all: float fixed
+all: float fixed opt
 
 # Floating-point targets
 float-sw: result/float_sw.txt
@@ -37,26 +37,20 @@ opt-hw: result/opt_result.csv
 opt: opt-sw opt-hw
 
 # compile floating-point implementation
-cordic_float: cordic.h cordic.cpp cordic_test.cpp
+float_cordic: cordic.h cordic.cpp cordic_test.cpp
 	@echo "Compiling & executing SW floating-point implementation ..."
 	g++ $(CXXFLAGS) cordic.cpp cordic_test.cpp -o $@
- 
-# compile fixed-point implementation
-cordic_fixed: cordic.h cordic.cpp cordic_test.cpp
+
+%_cordic: cordic.h cordic.cpp cordic_test.cpp
 	@echo "Compiling & executing SW fixed-point implementation ..."
 	g++ $(CXXFLAGS) -DFIXED_TYPE cordic.cpp cordic_test.cpp -o $@
 
-# compile fixed-point implementation for opt
-cordic_opt: cordic.h cordic.cpp cordic_test.cpp
-	@echo "Compiling & executing SW fixed-point implementation ..."
-	g++ $(CXXFLAGS) -DFIXED_TYPE cordic.cpp cordic_test.cpp -o $@
-
-result/%_sw.txt: cordic_%
+result/%_sw.txt: %_cordic
 	mkdir -p result
 	./$< | tee $@
 
 # Make hw. Compile sw version to catch syntax errors quicker
-result/%_result.csv: run_%.tcl cordic_%
+result/%_result.csv: run_%.tcl %_cordic
 	mkdir -p result
 	$(XIL_HLS) -f $<
 	[ -e $@ ] && echo “Output produced”
@@ -64,4 +58,4 @@ result/%_result.csv: run_%.tcl cordic_%
 # Clean up the directory before submission
 clean:
 	@echo "Clean up output files"
-	rm -rf result *.prj *.log *.dat cordic_float cordic_fixed
+	rm -rf result *.prj *.log *.dat *_cordic

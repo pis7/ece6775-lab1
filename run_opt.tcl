@@ -16,12 +16,8 @@
 # Set result filename and clean old data
 #------------------------------------------------------
 
-# To evaluate highest throughput case 
-set filename "opt_best_result.csv"
-
 # To use for batch tests
-# set filename "opt_result.csv"
-
+set filename "opt_result.csv"
 file delete -force "./result/${filename}"
 
 #-----------------------------------------------------
@@ -36,7 +32,7 @@ proc do_synth {proj_name unroll_f pipeline_i} {
   global filename
 
   # Define the bitwidth macros from CFLAGs (use default bit-widths)
-  set CFLAGS "-DFIXED_TYPE"
+  set CFLAGS "-DFIXED_TYPE -DFULL_WIDTH=32 -DI_WIDTH=8"
 
   # Open/reset the project
   open_project ${proj_name} -reset
@@ -83,16 +79,15 @@ proc do_synth {proj_name unroll_f pipeline_i} {
 #-----------------------------------
 
 # Unrolling tests
-# for {set f 0} {$f < 21} {incr f} {
-#   do_synth "opt_unroll_${f}.prj" $f 0
-# }
+for {set f 0} {$f < 21} {incr f} {
+  do_synth "opt_unroll_${f}.prj" $f 0
+}
 
 # Pipelining tests
-# for {set i 1} {$i < 41} {incr i} {
-#   do_synth "opt_pipeline_${i}.prj" 0 $i
-# }
+for {set i 1} {$i < 41} {incr i} {
+  do_synth "opt_pipeline_${i}.prj" 0 $i
+}
 
-# To evaluate highest throughput case
 do_synth "opt_best.prj" 20 1
 
 quit
