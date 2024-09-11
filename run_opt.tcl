@@ -20,13 +20,9 @@
 set filename "opt_result.csv"
 file delete -force "./result/${filename}"
 
-#-----------------------------------------------------
-# You can specify a set of bitwidth configurations to 
-# explore in the batch experiments. 
-# Each configuration (line) is defined by a pair in  
-# total bitwidth and integer bitwidth
-# Examples are shown below. 
-#-----------------------------------------------------
+#------------------------------------------------------
+# Synthesis process
+#------------------------------------------------------
 
 proc do_synth {proj_name unroll_f pipeline_i} {
   global filename
